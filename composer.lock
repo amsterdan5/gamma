@@ -1,0 +1,130 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "6e7325a2e306813ada8f16899481f76d",
+    "packages": [
+        {
+            "name": "phalcon/cphalcon",
+            "version": "v4.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phalcon/cphalcon.git",
+                "reference": "a8035814aa9a8a2438f92ebf5128964e7c48fd3f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phalcon/cphalcon/zipball/a8035814aa9a8a2438f92ebf5128964e7c48fd3f",
+                "reference": "a8035814aa9a8a2438f92ebf5128964e7c48fd3f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2 <8.0"
+            },
+            "provide": {
+                "psr/cache": "^1.0",
+                "psr/container": "^1.0",
+                "psr/event-dispatcher": "^0.7.0",
+                "psr/event-dispatcher-message": "^0.6.0",
+                "psr/event-dispatcher-task": "^0.6.0",
+                "psr/http-client": "^1.0",
+                "psr/http-factory": "^1.0",
+                "psr/http-message": "^1.0",
+                "psr/http-server-handler": "^1.0",
+                "psr/http-server-middleware": "^1.0",
+                "psr/link": "^1.0",
+                "psr/log": "^1.1",
+                "psr/simple-cache": "^1.0"
+            },
+            "require-dev": {
+                "codeception/codeception": "^4.0",
+                "codeception/module-apc": "^1.0.0",
+                "codeception/module-asserts": "^1.0.0",
+                "codeception/module-cli": "^1.0.0",
+                "codeception/module-db": "^1.0.0",
+                "codeception/module-filesystem": "^1.0.0",
+                "codeception/module-phalcon4": "^1.0.3",
+                "codeception/module-redis": "^1.0.0",
+                "ext-apcu": "*",
+                "ext-dom": "*",
+                "ext-gd": "*",
+                "ext-iconv": "*",
+                "ext-igbinary": "*",
+                "ext-imagick": "*",
+                "ext-intl": "*",
+                "ext-json": "*",
+                "ext-libxml": "*",
+                "ext-mbstring": "*",
+                "ext-msgpack": "*",
+                "ext-pdo": "*",
+                "ext-psr": "^0.7|1.0",
+                "ext-redis": "*",
+                "ext-sqlite3": "*",
+                "ext-xml": "*",
+                "friendsofphp/php-cs-fixer": "~2.0",
+                "mustache/mustache": "^2.12",
+                "phpunit/phpunit": "^8.5",
+                "predis/predis": "^1.1",
+                "squizlabs/php_codesniffer": "^3.4",
+                "twig/twig": "~1.36",
+                "vlucas/phpdotenv": "^2.5"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Phalcon Team",
+                    "email": "team@phalcon.io",
+                    "homepage": "https://phalcon.io/en/team"
+                },
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/phalcon/cphalcon/graphs/contributors"
+                }
+            ],
+            "description": "Phalcon is an open source web framework delivered as a C extension for the PHP language providing high performance and lower resource consumption.",
+            "keywords": [
+                "extension",
+                "framework",
+                "high load",
+                "mvc",
+                "phalcon",
+                "psr-17",
+                "psr-7"
+            ],
+            "support": {
+                "docs": "https://phalcon.link/docs/",
+                "email": "support@phalcon.io",
+                "forum": "https://phalcon.link/forum/",
+                "issues": "https://github.com/phalcon/cphalcon/issues",
+                "rss": "https://blog.phalcon.io/rss",
+                "source": "https://github.com/phalcon/cphalcon"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/phalcon",
+                    "type": "github"
+                },
+                {
+                    "url": "https://opencollective.com/phalcon",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2020-05-16T16:27:53+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
+}
