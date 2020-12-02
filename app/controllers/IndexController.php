@@ -1,27 +1,12 @@
 <?php
-declare(strict_types=1);
-
-use \User;
-use \House;
+declare (strict_types = 1);
 
 class IndexController extends ControllerBase
 {
 
     public function indexAction()
     {
-
-    }
-
-    public function getAction()
-    {
-        $user = new User();
-        $user->name = 'hello';
-        $r = $user->save();
-        if ($r) {
-            echo 'ok';
-        } else {
-            echo 'no';
-        }
+        echo 'ok';
+        $this->view->title = '去水印';
     }
 }
-
