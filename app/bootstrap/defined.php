@@ -17,6 +17,9 @@ define('DATA_PATH', BASE_PATH . '/data');
 // 函数库目录
 define('FUNC_PATH', APP_PATH . '/functions');
 
+// 日志目录
+define('LOGS_PATH', BASE_PATH . '/data/logs');
+
 // 外部库所在目录
 define('VEN_PATH', BASE_PATH . '/vendor');
 

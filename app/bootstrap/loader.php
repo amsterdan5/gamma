@@ -13,5 +13,7 @@ $loader
 /**
  * Register the autoloader of composer
  */
-// $vendorLoader = VEN_PATH . '/autoload.php';
-// if (is_file($vendorLoader)) require $vendorLoader;
+$vendorLoader = VEN_PATH . '/autoload.php';
+if (is_file($vendorLoader)) {
+    require $vendorLoader;
+}
