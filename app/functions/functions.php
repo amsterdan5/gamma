@@ -201,7 +201,7 @@ function get_client_ip()
  */
 function maskroot($path)
 {
-    return str_replace(ROOT_PATH, '~', $path);
+    return str_replace(BASE_PATH, '~', $path);
 }
 
 /**
@@ -256,4 +256,219 @@ function camel($string, $upper = false, $separator = '_')
     $string = str_replace($separator, '_', $string);
 
     return $upper ? Phalcon\Text::camelize($string) : lcfirst(Phalcon\Text::camelize($string));
+}
+
+// 把一个对象结构递归变成一数组结构
+function o2a($d)
+{
+    if (is_object($d)) {
+        if (method_exists($d, 'getArrayCopy')) {
+            $d = $d->getArrayCopy();
+        } elseif (method_exists($d, 'getArrayIterator')) {
+            $d = $d->getArrayIterator()->getArrayCopy();
+        } elseif (method_exists($d, 'toArray')) {
+            $d = $d->toArray();
+        } else
+        // Gets the properties of the given object
+        // with get_object_vars function
+        {
+            $d = get_object_vars($d);
+        }
+    }
+
+    /*
+     * Return array converted to object
+     * Using __FUNCTION__ (Magic constant)
+     * for recursive call
+     */
+    if (is_array($d)) {
+        return array_map(__FUNCTION__, $d);
+    }
+
+    // Return array
+    return $d;
+}
+
+if (!function_exists('http_build_url')) {
+    define('HTTP_URL_REPLACE', 1); // Replace every part of the first URL when there's one of the second URL
+    define('HTTP_URL_JOIN_PATH', 2); // Join relative paths
+    define('HTTP_URL_JOIN_QUERY', 4); // Join query strings
+    define('HTTP_URL_STRIP_USER', 8); // Strip any user authentication information
+    define('HTTP_URL_STRIP_PASS', 16); // Strip any password authentication information
+    define('HTTP_URL_STRIP_AUTH', 32); // Strip any authentication information
+    define('HTTP_URL_STRIP_PORT', 64); // Strip explicit port numbers
+    define('HTTP_URL_STRIP_PATH', 128); // Strip complete path
+    define('HTTP_URL_STRIP_QUERY', 256); // Strip query string
+    define('HTTP_URL_STRIP_FRAGMENT', 512); // Strip any fragments (#identifier)
+    define('HTTP_URL_STRIP_ALL', 1024); // Strip anything but scheme and host
+
+    /**
+     * Build an URL
+     * The parts of the second URL will be merged into the first according to the flags argument.
+     *
+     * @param mixed   (Part(s) of) an URL in form of a string or associative array like parse_url() returns
+     * @param mixed   Same     as the first argument
+     * @param integer A        bitmask of binary or'ed HTTP_URL constants (Optional)HTTP_URL_REPLACE is the default
+     * @param array   If       set, it will be filled with the parts of the composed url like parse_url() would return
+     */
+    function http_build_url($url, $parts = [], $flags = HTTP_URL_REPLACE, &$new_url = false)
+    {
+        $keys = ['user', 'pass', 'port', 'path', 'query', 'fragment'];
+
+        // HTTP_URL_STRIP_ALL becomes all the HTTP_URL_STRIP_Xs
+        if ($flags & HTTP_URL_STRIP_ALL) {
+            $flags |= HTTP_URL_STRIP_USER;
+            $flags |= HTTP_URL_STRIP_PASS;
+            $flags |= HTTP_URL_STRIP_PORT;
+            $flags |= HTTP_URL_STRIP_PATH;
+            $flags |= HTTP_URL_STRIP_QUERY;
+            $flags |= HTTP_URL_STRIP_FRAGMENT;
+        }
+        // HTTP_URL_STRIP_AUTH becomes HTTP_URL_STRIP_USER and HTTP_URL_STRIP_PASS
+        elseif ($flags & HTTP_URL_STRIP_AUTH) {
+            $flags |= HTTP_URL_STRIP_USER;
+            $flags |= HTTP_URL_STRIP_PASS;
+        }
+
+        // Parse the original URL
+        $parse_url = parse_url($url);
+
+        // Scheme and Host are always replaced
+        if (isset($parts['scheme'])) {
+            $parse_url['scheme'] = $parts['scheme'];
+        }
+
+        if (isset($parts['host'])) {
+            $parse_url['host'] = $parts['host'];
+        }
+
+        // (If applicable) Replace the original URL with it's new parts
+        if ($flags & HTTP_URL_REPLACE) {
+            foreach ($keys as $key) {
+                if (isset($parts[$key])) {
+                    $parse_url[$key] = $parts[$key];
+                }
+
+            }
+        } else {
+            // Join the original URL path with the new path
+            if (isset($parts['path']) && ($flags & HTTP_URL_JOIN_PATH)) {
+                if (isset($parse_url['path'])) {
+                    $parse_url['path'] = rtrim(str_replace(basename($parse_url['path']), '', $parse_url['path']), '/') . '/' . ltrim($parts['path'], '/');
+                } else {
+                    $parse_url['path'] = $parts['path'];
+                }
+
+            }
+
+            // Join the original query string with the new query string
+            if (isset($parts['query']) && ($flags & HTTP_URL_JOIN_QUERY)) {
+                if (isset($parse_url['query'])) {
+                    $parse_url['query'] .= '&' . $parts['query'];
+                } else {
+                    $parse_url['query'] = $parts['query'];
+                }
+
+            }
+        }
+
+        // Strips all the applicable sections of the URL
+        // Note: Scheme and Host are never stripped
+        foreach ($keys as $key) {
+            if ($flags & (int) constant('HTTP_URL_STRIP_' . strtoupper($key))) {
+                unset($parse_url[$key]);
+            }
+
+        }
+
+        $new_url = $parse_url;
+
+        return
+            ((isset($parse_url['scheme'])) ? $parse_url['scheme'] . '://' : '') .
+            ((isset($parse_url['user'])) ? $parse_url['user'] . ((isset($parse_url['pass'])) ? ':' . $parse_url['pass'] : '') . '@' : '') .
+            ((isset($parse_url['host'])) ? $parse_url['host'] : '') .
+            ((isset($parse_url['port'])) ? ':' . $parse_url['port'] : '') .
+            ((isset($parse_url['path'])) ? $parse_url['path'] : '') .
+            ((isset($parse_url['query'])) ? '?' . $parse_url['query'] : '') .
+            ((isset($parse_url['fragment'])) ? '#' . $parse_url['fragment'] : '')
+        ;
+    }
+}
+
+// 获取当前链接
+function get_current_url()
+{
+    $current_url = 'http://';
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
+        $current_url = 'https://';
+    }
+    if ($_SERVER['SERVER_PORT'] != '80') {
+        $current_url .= $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];
+    } else {
+        $current_url .= $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+    }
+    return $current_url;
+}
+
+// 获取当前客户的ip
+function get_current_ip()
+{
+    //header Formax　Real　IP
+    if (isset($_SERVER['HTTP_FORMAX_REAL_IP'])) {
+        $ip = $_SERVER['HTTP_FORMAX_REAL_IP'];
+    } elseif (isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+        $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+    } elseif (isset($_SERVER["HTTP_CLIENT_IP"])) {
+        $ip = $_SERVER["HTTP_CLIENT_IP"];
+    } elseif (isset($_SERVER["REMOTE_ADDR"])) {
+        $ip = $_SERVER["REMOTE_ADDR"];
+    } elseif (getenv("HTTP_X_FORWARDED_FOR")) {
+        $ip = getenv("HTTP_X_FORWARDED_FOR");
+    } elseif (getenv("HTTP_CLIENT_IP")) {
+        $ip = getenv("HTTP_CLIENT_IP");
+    } elseif (getenv("REMOTE_ADDR")) {
+        $ip = getenv("REMOTE_ADDR");
+    } else {
+        $ip = service('request')->getClientAddress();
+    }
+    //多个代理的处理
+    if (strpos($ip, ',') !== false) {
+        $ip = explode(',', $ip);
+        $ip = $ip[0];
+    }
+
+    return $ip;
+}
+
+/**
+ * xss过滤函数
+ *
+ * @param  $string
+ * @return string
+ */
+function remove_xss($string)
+{
+    $string = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/S', '', $string);
+
+    $param1 = ['javascript', 'vbscript', 'expression', 'applet', 'meta', 'xml', 'blink', 'link', 'script', 'embed', 'object', 'iframe', 'frame', 'frameset', 'ilayer', 'layer', 'bgsound', 'title', 'base'];
+
+    $param2 = ['onabort', 'onactivate', 'onafterprint', 'onafterupdate', 'onbeforeactivate', 'onbeforecopy', 'onbeforecut', 'onbeforedeactivate', 'onbeforeeditfocus', 'onbeforepaste', 'onbeforeprint', 'onbeforeunload', 'onbeforeupdate', 'onblur', 'onbounce', 'oncellchange', 'onchange', 'onclick', 'oncontextmenu', 'oncontrolselect', 'oncopy', 'oncut', 'ondataavailable', 'ondatasetchanged', 'ondatasetcomplete', 'ondblclick', 'ondeactivate', 'ondrag', 'ondragend', 'ondragenter', 'ondragleave', 'ondragover', 'ondragstart', 'ondrop', 'onerror', 'onerrorupdate', 'onfilterchange', 'onfinish', 'onfocus', 'onfocusin', 'onfocusout', 'onhelp', 'onkeydown', 'onkeypress', 'onkeyup', 'onlayoutcomplete', 'onload', 'onlosecapture', 'onmousedown', 'onmouseenter', 'onmouseleave', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onmousewheel', 'onmove', 'onmoveend', 'onmovestart', 'onpaste', 'onpropertychange', 'onreadystatechange', 'onreset', 'onresize', 'onresizeend', 'onresizestart', 'onrowenter', 'onrowexit', 'onrowsdelete', 'onrowsinserted', 'onscroll', 'onselect', 'onselectionchange', 'onselectstart', 'onstart', 'onstop', 'onsubmit', 'onunload'];
+
+    $param = array_merge($param1, $param2);
+
+    for ($i = 0; $i < sizeof($param); $i++) {
+        $pattern = '/';
+        for ($j = 0; $j < strlen($param[$i]); $j++) {
+            if ($j > 0) {
+                $pattern .= '(';
+                $pattern .= '(&#[x|X]0([9][a][b]);?)?';
+                $pattern .= '|(&#0([9][10][13]);?)?';
+                $pattern .= ')?';
+            }
+            $pattern .= $param[$i][$j];
+        }
+        $pattern .= '/i';
+        $string = preg_replace($pattern, '', $string);
+    }
+    return $string;
 }

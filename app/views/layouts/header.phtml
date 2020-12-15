@@ -2,6 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
+        {% if title %}<title>{{ title }}</title>{% endif %}
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -9,9 +10,9 @@
         <meta name="screen-orientation" content="portrait">
         <meta name="x5-orientation" content="portrait">
         <meta name="format-detection" content="telephone=no" />
-       {% block title %}{{ title }}{% endblock %}
-        <link rel="stylesheet" type="text/css" href="/watermark/css/style.css?{{ update_time }}" />
-        <script type="text/javascript" src="/watermark/js/scale.js?{{ update_time }}"></script>
-        <link rel="stylesheet" type="text/css" href="/watermark/css/m-plus.css?{{ update_time }}" />
+        <link rel="Shortcut Icon" href="<?= url_static('/favicon.ico');?>" type="image/x-icon" />
+        <link rel="stylesheet" type="text/css" href="<?=url_static('layui/css/layui.css')?>" />
+        <link rel="stylesheet" href="<?=url_static('css/default.css')?>" type="text/css" />
+        <link rel="stylesheet" href="<?=url_static('css/error.css')?>" type="text/css" />
     </head>
     <body>

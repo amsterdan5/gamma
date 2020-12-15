@@ -75,14 +75,14 @@ class Logger extends \Phalcon\DI\Injectable
      * @link  http://docs.phalconphp.com/en/latest/api/Phalcon_Logger_Adapter_File.html
      *
      * @param string $name 日志名称
-     * @param string $msg  日志内容
      * @param string $type 日志类型
+     * @param string $msg  日志内容
      */
-    public function log($name, $msg, $type = null)
+    public function log($name, $type, $msg)
     {
         $type = $type === null ? \Phalcon\Logger::INFO : $type;
 
-        return $this->_adapter($name)->log($msg, $type);
+        return $this->_adapter($name)->log($type, $msg);
     }
 
     public function __call($fun, $arguments)

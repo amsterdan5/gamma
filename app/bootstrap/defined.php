@@ -23,6 +23,19 @@ define('LOGS_PATH', BASE_PATH . '/data/logs');
 // 外部库所在目录
 define('VEN_PATH', BASE_PATH . '/vendor');
 
+// -----------------------------------------------------------------------------
+// 项目常量定义
+// -----------------------------------------------------------------------------
+
+// 定义项目开始时间
+defined('START_TIME') || define('START_TIME', microtime(true));
+
+// 定义项目初始内存
+defined('START_MEMORY') || define('START_MEMORY', memory_get_usage());
+
+// 项目版本
+define('VERSION', '1.0.0');
+
 /**
  * 定义开发环境
  * 如果服务器定义了 APP_ENV 变量，则以 APP_ENV 值作为环境定义

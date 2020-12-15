@@ -1,14 +1,15 @@
 <?php
+use Phalcon\Di\Injectable;
 use Phalcon\Events\Event;
 use Phalcon\Mvc\Dispatcher;
 
 /**
  * 异常处理
  */
-class ExceptionsPlugin extends Phalcon\Mvc\User\Plugin
+class ExceptionsPlugin extends Injectable
 {
-    public function beforeException(
-        Event $event, Dispatcher $dispatcher, $exception) {
+    public function beforeException(Event $event, Dispatcher $dispatcher, $exception)
+    {
         $dispatcher->setParam('exception', $exception);
 
         // 错误信息
@@ -31,22 +32,11 @@ class ExceptionsPlugin extends Phalcon\Mvc\User\Plugin
         }
 
         $this->view->setViewsDir(APP_PATH . '/views');
-
-        // 找不到页面就返回404
-        $error_code = $exception->getCode();
-        if ($error_code === DpException::EXCEPTION_HANDLER_NOT_FOUND || $error_code === DpException::EXCEPTION_ACTION_NOT_FOUND) {
-            $forward = [
-                'namespace'  => '\\',
-                'controller' => 'error',
-                'action'     => 'show404',
-            ];
-        } else {
-            $forward = [
-                'namespace'  => '\\',
-                'controller' => 'error',
-                'action'     => 'index',
-            ];
-        }
+        $forward = [
+            'namespace'  => '\\',
+            'controller' => 'error',
+            'action'     => 'index',
+        ];
 
         $dispatcher->forward($forward);
         return false;

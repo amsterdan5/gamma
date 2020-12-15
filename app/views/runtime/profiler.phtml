@@ -1,0 +1,30 @@
+<h4>SQL Profiler</h4>
+<? $profiler = $this->getDI()->get('dbListener')->getProfiler(); ?>
+<div class="info-box">
+    <div class="info-title">
+        <strong>Total Queries:</strong>
+        <font color="green"><?=$profiler->getNumberTotalStatements()?></font>,
+        <strong>Elapsed Time:</strong>
+        <font color="green"><?=round($profiler->getTotalElapsedSeconds(), 8)?></font> secs
+    </div>
+    <? if ($profiler->getNumberTotalStatements()): ?>
+        <div class="info-body">
+            <? foreach ($profiler->getProfiles() as $profile): ?>
+            <div class="info-line">
+                <font color="green"><i><?=$profile->getSQLStatement()?></i></font>
+                <font color="gray">-- <?=round($profile->getTotalElapsedSeconds(), 8)?></font>
+            </div>
+            <? endforeach; ?>
+        </div>
+    <? endif; ?>
+</div>
+
+<h4>Page Profiler</h4>
+<div class="info-box">
+    <div class="info-title">
+        <strong>Page Time:</strong>
+        <font color="green"><?=round(microtime(true) - START_TIME, 8)?></font> secs,
+        <strong>Usage Memory:</strong>
+        <font color="green"><?=round((memory_get_usage() - START_MEMORY) / 1024, 2)?></font> kb
+    </div>
+</div>

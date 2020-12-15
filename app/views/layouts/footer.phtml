@@ -1,4 +1,16 @@
 
+<? if (! PRODUCTION || _g('debug') === 'yes'): ?>
+<div id="runtime-info">
+    <? partial('runtime/trace') ?>
+    <? partial('runtime/profiler') ?>
+</div>
+<? endif; ?>
 </body>
+<script type="text/javascript" src="<?=url_static('/lib/layui/layui.js')?>"></script>
+<script type="text/javascript" src="<?=url_js('library/lay-config.js')?>"></script>
+<!--[if lt IE 9]>
+  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+{% if requireJs %}<?=require_js($requireJs)?>{% endif %}
 </html>
-<!-- requireJS -->

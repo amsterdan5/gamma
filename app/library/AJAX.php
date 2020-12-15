@@ -40,7 +40,7 @@ class AJAX extends \Phalcon\DI\Injectable
      */
     public function error($message = null, $data = null)
     {
-        $this->response(self::INTERNAL_ERROR, $message, $data);
+        $this->response(self::ERROR, $message, $data);
     }
 
     /**
@@ -51,6 +51,6 @@ class AJAX extends \Phalcon\DI\Injectable
      */
     public function success($message = null, $data = null)
     {
-        $this->response(self::SUCCEED, $message, $data);
+        $this->response(self::SUCCESS, $message, $data);
     }
 }

@@ -26,7 +26,7 @@ class I18n
      *
      * @var array
      */
-    protected $_packages = [];
+    protected $_packages = ['common'];
 
     /**
      * 所有语言缓存

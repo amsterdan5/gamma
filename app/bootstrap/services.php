@@ -1,7 +1,7 @@
 <?php
 declare (strict_types = 1);
 
-use Phalcon\Dispatcher\Exception as DpException;
+use EasyWeChat\Factory as WX;
 use Phalcon\Flash\Direct as Flash;
 use Phalcon\Mvc\Dispatcher as MvcDispatcher;
 use Phalcon\Mvc\View;
@@ -56,22 +56,34 @@ $di->setShared('view', function () {
  * Database connection is created based in the parameters defined in the configuration file
  */
 $di->setShared('db', function () {
-    $config = $this->getConfig();
+    $config = $this->getConfig()->database;
 
-    $class  = 'Phalcon\Db\Adapter\Pdo\\' . $config->database->adapter;
-    $params = [
-        'host'     => $config->database->db->host,
-        'username' => $config->database->db->username,
-        'password' => $config->database->db->password,
-        'dbname'   => $config->database->db->dbname,
-        'charset'  => $config->database->db->charset,
-    ];
+    $class  = 'Phalcon\Db\Adapter\Pdo\\' . $config->db->adapter;
+    $params = $config->db->toArray();
 
-    if ($config->database->adapter == 'Postgresql') {
+    if ($config->db->adapter == 'Postgresql') {
         unset($params['charset']);
     }
 
-    return new $class($params);
+    $connection = new $class($params);
+
+    // Create an EventsManager
+    $eventsManager = new Phalcon\Events\Manager();
+
+    // Listen all the database events
+    $eventsManager->attach('db', $this->get('dbListener'));
+
+    // Assign the events manager to the connection
+    $connection->setEventsManager($eventsManager);
+
+    return $connection;
+});
+
+/**
+ * 监听db
+ */
+$di->set('dbListener', function () {
+    return new \Base\DbListener();
 });
 
 /**
@@ -93,14 +105,16 @@ $di->set('cookies', function () {
     $config  = $this->getConfig()->cookies->toArray();
     $cookies = new Base\Cookies($config);
 
-    $params = array_merge(session_get_cookie_params(), $config);
-    session_set_cookie_params(
-        $params['lifetime'],
-        $params['path'],
-        $params['domain'],
-        $params['secure'],
-        $params['httponly']
-    );
+    if (!isset($_SESSION)) {
+        $params = array_merge(session_get_cookie_params(), $config);
+        session_set_cookie_params(
+            $params['lifetime'],
+            $params['path'],
+            $params['domain'],
+            $params['secure'],
+            $params['httponly']
+        );
+    }
     return $cookies;
 });
 
@@ -195,20 +209,7 @@ $di->set('flash', function () {
  */
 $di->set('dispatcher', function () use ($di) {
     $em = $di->getShared('eventsManager');
-    $em->attach(
-        'dispatch:beforeException',
-        function ($event, $dispatcher, $exception) {
-            switch ($exception->getCode()) {
-                case DpException::EXCEPTION_HANDLER_NOT_FOUND:
-                case DpException::EXCEPTION_ACTION_NOT_FOUND:
-                    $dispatcher->forward([
-                        'controller' => 'error',
-                        'action'     => 'show404',
-                    ]);
-                    return false;
-            }
-        }
-    );
+    $em->attach('dispatch:beforeException', new ExceptionsPlugin($di));
 
     $dispatcher = new MvcDispatcher();
     $dispatcher->setEventsManager($em);
@@ -227,4 +228,50 @@ $di->set('ajax', function () {
  */
 $di->set('logger', function () {
     return new Base\Logger();
+});
+
+/**
+ * 微信公众号
+ */
+$di->set('wx', function () {
+    $config   = C('wx.config');
+    $cli      = IS_CLI ? '_cli' : '';
+    $log_file = LOGS_PATH . date('/Ymd') . $cli . '/wechat.log';
+
+    $data = [
+        'app_id'        => $config->appId,
+        'secret'        => $config->appSecret,
+        'token'         => $config->token,
+        'aes_key'       => $config->encodeKey,
+        'response_type' => $config->responseType,
+        'log'           => [
+            'level' => 'debug',
+            'file'  => $log_file,
+        ],
+    ];
+    $app = WX::officailAccount($data);
+    return $app->server->serve();
+});
+
+/**
+ * 小程序
+ */
+$di->set('wxProgram', function () {
+    $config   = C('wx.config');
+    $cli      = IS_CLI ? '_cli' : '';
+    $log_file = LOGS_PATH . date('/Ymd') . $cli . '/wechat_program.log';
+
+    $data = [
+        'app_id'        => $config->appId,
+        'secret'        => $config->appSecret,
+        'token'         => $config->token,
+        'aes_key'       => $config->encodeKey,
+        'response_type' => $config->responseType,
+        'log'           => [
+            'level' => 'debug',
+            'file'  => $log_file,
+        ],
+    ];
+    $app = WX::miniProgram($config);
+    return $app->server->serve();
 });

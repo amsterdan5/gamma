@@ -1,0 +1,19 @@
+<? if (isset($exception) and $exception instanceof Exception): ?>
+    <h4>Exception Trace</h4>
+    <?
+    $trace = $exception->getTraceAsString();
+    $lines = preg_split('/\n/', $trace);
+    ?>
+    <div class="info-box">
+        <div class="info-title">
+            <strong><?=get_class($exception)?>:</strong>
+            <font color="red">[<?=$exception->getCode()?>] <?=maskroot($exception->getMessage())?></font>
+            (in <i><?=maskroot($exception->getFile())?></i> on line <?=$exception->getLine()?>)
+        </div>
+        <div class="info-body">
+            <? foreach ($lines as $line): ?>
+                <?=preg_replace('/^(#\d+)([^:]*)(.*)/', '<strong>$1</strong>: <i>$2</i> <font color="green">$3</font>', maskroot($line))?><br />
+            <? endforeach; ?>
+        </div>
+    </div>
+<? endif; ?>
