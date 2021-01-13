@@ -76,34 +76,6 @@ function redis($key, $data = '', $lifetime = 86400, $opts = [])
 }
 
 /**
- * 简化日志写入方法
- *
- *      Phalcon\Logger::SPECIAL
- *      Phalcon\Logger::CUSTOM
- *      Phalcon\Logger::DEBUG
- *      Phalcon\Logger::INFO
- *      Phalcon\Logger::NOTICE
- *      Phalcon\Logger::WARNING
- *      Phalcon\Logger::ERROR
- *      Phalcon\Logger::ALERT
- *      Phalcon\Logger::CRITICAL
- *      Phalcon\Logger::EMERGENCE
- *      Phalcon\Logger::MERGENCY
- * @link   http://docs.phalconphp.com/en/latest/api/Phalcon_Logger.html
- * @link   http://docs.phalconphp.com/en/latest/api/Phalcon_Logger_Adapter_File.html
- *
- * @param string $name    日志名称
- * @param string $message 日志内容
- * @param string $type    日志类型
- */
-function logger($name, $message, $type = null)
-{
-    $message = preg_replace('/password=(.*)&amount=/', 'password=******&amount=', $message);
-
-    return service('logger')->log($name, $type, $message);
-}
-
-/**
  * 调用 Logger 记录 request 请求
  *
  * @param string                                  $name
@@ -309,7 +281,6 @@ function url_param($uri, array $params = null)
  * 获取 JS 网址
  *
  * @param  string   $jsfile
- * @param  boolean  $jsfile
  * @return string
  */
 function url_js($jsfile = null, $time = false)
@@ -321,7 +292,29 @@ function url_js($jsfile = null, $time = false)
         }
     }
 
-    return url_static('js/' . $jsfile, $time);
+    $path = DEVELOPMENT ? 'static/js/' . $jsfile : 'js/' . $jsfile;
+
+    return url_static($path, $time);
+}
+
+/**
+ * 获取 JS 网址
+ *
+ * @param  string   $cssfile
+ * @return string
+ */
+function url_css($cssfile = null, $time = false)
+{
+    if ($cssfile) {
+        $cssfile = ltrim($cssfile, '/');
+        if (empty($cssfile)) {
+            $time = false;
+        }
+    }
+
+    $path = DEVELOPMENT ? 'static/css/' . $cssfile : 'css/' . $cssfile;
+
+    return url_static($path, $time);
 }
 
 /**

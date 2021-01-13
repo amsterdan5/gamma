@@ -1,0 +1,24 @@
+{
+  "name": "gamma.com",
+  "version": "1.0.0",
+  "description": "use phalcon framework",
+  "main": "index.js",
+  "dependencies": {
+    "uglify-js": "^3.12.4",
+    "uglifycss": "0.0.29"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amsterdan5/gamma.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amsterdan5/gamma/issues"
+  },
+  "homepage": "https://github.com/amsterdan5/gamma#readme"
+}

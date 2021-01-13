@@ -123,6 +123,34 @@ function C($name, $default = null)
 }
 
 /**
+ * 简化日志写入方法
+ *
+ *      Phalcon\Logger::SPECIAL
+ *      Phalcon\Logger::CUSTOM
+ *      Phalcon\Logger::DEBUG
+ *      Phalcon\Logger::INFO
+ *      Phalcon\Logger::NOTICE
+ *      Phalcon\Logger::WARNING
+ *      Phalcon\Logger::ERROR
+ *      Phalcon\Logger::ALERT
+ *      Phalcon\Logger::CRITICAL
+ *      Phalcon\Logger::EMERGENCE
+ *      Phalcon\Logger::MERGENCY
+ * @link   http://docs.phalconphp.com/en/latest/api/Phalcon_Logger.html
+ * @link   http://docs.phalconphp.com/en/latest/api/Phalcon_Logger_Adapter_File.html
+ *
+ * @param string $name    日志名称
+ * @param string $message 日志内容
+ * @param string $type    日志类型
+ */
+function logger($name, $message, $type = null)
+{
+    $message = preg_replace('/password=(.*)&amount=/', 'password=******&amount=', $message);
+
+    return service('logger')->log($name, $type, $message);
+}
+
+/**
  * 不报错，不转义中文的json_encode
  *
  * @param  array    $arr
@@ -290,17 +318,17 @@ function o2a($d)
 }
 
 if (!function_exists('http_build_url')) {
-    define('HTTP_URL_REPLACE', 1); // Replace every part of the first URL when there's one of the second URL
-    define('HTTP_URL_JOIN_PATH', 2); // Join relative paths
-    define('HTTP_URL_JOIN_QUERY', 4); // Join query strings
-    define('HTTP_URL_STRIP_USER', 8); // Strip any user authentication information
-    define('HTTP_URL_STRIP_PASS', 16); // Strip any password authentication information
-    define('HTTP_URL_STRIP_AUTH', 32); // Strip any authentication information
-    define('HTTP_URL_STRIP_PORT', 64); // Strip explicit port numbers
-    define('HTTP_URL_STRIP_PATH', 128); // Strip complete path
-    define('HTTP_URL_STRIP_QUERY', 256); // Strip query string
+    define('HTTP_URL_REPLACE', 1);          // Replace every part of the first URL when there's one of the second URL
+    define('HTTP_URL_JOIN_PATH', 2);        // Join relative paths
+    define('HTTP_URL_JOIN_QUERY', 4);       // Join query strings
+    define('HTTP_URL_STRIP_USER', 8);       // Strip any user authentication information
+    define('HTTP_URL_STRIP_PASS', 16);      // Strip any password authentication information
+    define('HTTP_URL_STRIP_AUTH', 32);      // Strip any authentication information
+    define('HTTP_URL_STRIP_PORT', 64);      // Strip explicit port numbers
+    define('HTTP_URL_STRIP_PATH', 128);     // Strip complete path
+    define('HTTP_URL_STRIP_QUERY', 256);    // Strip query string
     define('HTTP_URL_STRIP_FRAGMENT', 512); // Strip any fragments (#identifier)
-    define('HTTP_URL_STRIP_ALL', 1024); // Strip anything but scheme and host
+    define('HTTP_URL_STRIP_ALL', 1024);     // Strip anything but scheme and host
 
     /**
      * Build an URL
@@ -348,7 +376,6 @@ if (!function_exists('http_build_url')) {
                 if (isset($parts[$key])) {
                     $parse_url[$key] = $parts[$key];
                 }
-
             }
         } else {
             // Join the original URL path with the new path
@@ -358,7 +385,6 @@ if (!function_exists('http_build_url')) {
                 } else {
                     $parse_url['path'] = $parts['path'];
                 }
-
             }
 
             // Join the original query string with the new query string
@@ -368,7 +394,6 @@ if (!function_exists('http_build_url')) {
                 } else {
                     $parse_url['query'] = $parts['query'];
                 }
-
             }
         }
 
@@ -378,7 +403,6 @@ if (!function_exists('http_build_url')) {
             if ($flags & (int) constant('HTTP_URL_STRIP_' . strtoupper($key))) {
                 unset($parse_url[$key]);
             }
-
         }
 
         $new_url = $parse_url;
@@ -416,18 +440,18 @@ function get_current_ip()
     //header Formax　Real　IP
     if (isset($_SERVER['HTTP_FORMAX_REAL_IP'])) {
         $ip = $_SERVER['HTTP_FORMAX_REAL_IP'];
-    } elseif (isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
-        $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
-    } elseif (isset($_SERVER["HTTP_CLIENT_IP"])) {
-        $ip = $_SERVER["HTTP_CLIENT_IP"];
-    } elseif (isset($_SERVER["REMOTE_ADDR"])) {
-        $ip = $_SERVER["REMOTE_ADDR"];
-    } elseif (getenv("HTTP_X_FORWARDED_FOR")) {
-        $ip = getenv("HTTP_X_FORWARDED_FOR");
-    } elseif (getenv("HTTP_CLIENT_IP")) {
-        $ip = getenv("HTTP_CLIENT_IP");
-    } elseif (getenv("REMOTE_ADDR")) {
-        $ip = getenv("REMOTE_ADDR");
+    } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    } elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
+        $ip = $_SERVER['HTTP_CLIENT_IP'];
+    } elseif (isset($_SERVER['REMOTE_ADDR'])) {
+        $ip = $_SERVER['REMOTE_ADDR'];
+    } elseif (getenv('HTTP_X_FORWARDED_FOR')) {
+        $ip = getenv('HTTP_X_FORWARDED_FOR');
+    } elseif (getenv('HTTP_CLIENT_IP')) {
+        $ip = getenv('HTTP_CLIENT_IP');
+    } elseif (getenv('REMOTE_ADDR')) {
+        $ip = getenv('REMOTE_ADDR');
     } else {
         $ip = service('request')->getClientAddress();
     }

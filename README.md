@@ -8,3 +8,11 @@ use phalcon framework
 
 #install phalcon tools
 git clone git://github.com/phalcon/phalcon-devtools.git
+
+#instatl node
+
+#init
+./bin/app-init.sh
+
+#publish
+./bin/static-min.sh
