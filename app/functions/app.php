@@ -292,29 +292,7 @@ function url_js($jsfile = null, $time = false)
         }
     }
 
-    $path = DEVELOPMENT ? 'static/js/' . $jsfile : 'js/' . $jsfile;
-
-    return url_static($path, $time);
-}
-
-/**
- * 获取 JS 网址
- *
- * @param  string   $cssfile
- * @return string
- */
-function url_css($cssfile = null, $time = false)
-{
-    if ($cssfile) {
-        $cssfile = ltrim($cssfile, '/');
-        if (empty($cssfile)) {
-            $time = false;
-        }
-    }
-
-    $path = DEVELOPMENT ? 'static/css/' . $cssfile : 'css/' . $cssfile;
-
-    return url_static($path, $time);
+    return url_static('js/' . $jsfile, $time);
 }
 
 /**
