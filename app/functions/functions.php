@@ -194,8 +194,8 @@ function get_client_ip()
 {
     if (!empty($_SERVER['HTTP_FORMAX_REAL_IP'])) {
         $ip = $_SERVER['HTTP_FORMAX_REAL_IP'];
-    } elseif (method_exists(app('request'), 'ip')) {
-        $ip = app('request')->ip();
+    } elseif (method_exists(service('request'), 'ip')) {
+        $ip = service('request')->ip();
     } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
         // When a HTTP request is proxied, some proxy server will add requester's
         // IP address to $_SERVER['HTTP_X_FORWARDED_FOR'].

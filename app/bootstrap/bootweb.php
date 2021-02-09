@@ -47,6 +47,7 @@ class Bootweb
         $application = new \Phalcon\Mvc\Application($di);
 
         echo $application->handle($_SERVER['REQUEST_URI'])->getContent();
+        // echo $application->useImplicitView(false)->handle($_SERVER['REQUEST_URI'])->getContent();
     }
 
     /**

@@ -48,6 +48,22 @@ function _lang($string, array $values = null, $lang = null)
 }
 
 /**
+ * 简写的 $_GET
+ *
+ * @link   http://docs.phalconphp.com/en/latest/reference/request.html
+ * @link   http://docs.phalconphp.com/en/latest/api/Phalcon_Http_Request.html
+ *
+ * @param  string  $name
+ * @param  mixed   $default
+ * @param  mixed   $filters
+ * @return mixed
+ */
+function _g($name = null, $default = null, $filters = null)
+{
+    return service('request')->getQuery($name, $filters, $default);
+}
+
+/**
  * 写入redis缓存
  *
  * @param  string  $key
